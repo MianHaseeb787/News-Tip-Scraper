@@ -23,7 +23,7 @@ with open("hostdata.csv", mode="w", newline='') as hs_file:
     hs_writer.writerow(host_headers)
 
 options = Options()
-
+options.page_load_strategy = 'normal'
 driver = webdriver.Chrome(
     service=Service(ChromeDriverManager().install()), 
     options=options,
@@ -55,7 +55,7 @@ dropdown = driver.find_element(By.ID, "advanced_search_field_country")
 
 select = Select(dropdown)
 
-country_text = "United States"
+country_text = "Afghanistan"
 select.select_by_value(country_text)
 
 search_btn = driver.find_element(By.ID, "search_btn")
@@ -102,8 +102,15 @@ for j in range(len(state_select.options)):
 
         records = driver.find_elements(By.CLASS_NAME, "search-item")
         for record in records:
-            name = record.find_element(By.CSS_SELECTOR, "span.info-name > a")
-            name.click()
+
+            try:
+                name = record.find_element(By.CSS_SELECTOR, "span.info-name > a")
+                name.click()
+            except Exception as e:
+                print("journalist Name not found")
+                print(e)
+                continue
+                
 
             # Switch to the new tab
             driver.switch_to.window(driver.window_handles[-1])
@@ -228,16 +235,21 @@ for j in range(len(state_select.options)):
                     suburb, email, phone, picture_url, source_url, last_article_url, author_url
                 ])
 
-            time.sleep(1)
+            # time.sleep(1)
             driver.close()
 
             driver.switch_to.window(driver.window_handles[0])
-            time.sleep(2)
+            # time.sleep(0.5)
 
             # Host profiel scrape code
 
-            comp_name = record.find_element(By.CSS_SELECTOR, "span.info-outlet-name > a")
-            comp_name.click()
+            try:
+                comp_name = record.find_element(By.CSS_SELECTOR, "span.info-outlet-name > a")
+                comp_name.click()
+            except Exception as e:
+                print("Company Name not found")
+                print(e)
+                continue
             driver.switch_to.window(driver.window_handles[-1])
 
             try:
@@ -329,6 +341,7 @@ for j in range(len(state_select.options)):
                     current_page = int(current_page_element.text.strip())  # Extract the current page number
 
                     if current_page is None:
+                        print("pagination ended")
                         break
 
                 
@@ -344,9 +357,14 @@ for j in range(len(state_select.options)):
 
                     records = driver.find_elements(By.CLASS_NAME, "search-item")
                     for record in records:
-                        print("recaords")
-                        name = record.find_element(By.CSS_SELECTOR, "span.info-name > a")
-                        name.click()
+                        # print("recaords")
+                        try:
+                            name = record.find_element(By.CSS_SELECTOR, "span.info-name > a")
+                            name.click()
+                        except Exception as e:
+                            print("JN name not found")
+                            print(e)
+                            continue
 
                         # Switch to the new tab
                         driver.switch_to.window(driver.window_handles[-1])
@@ -473,20 +491,26 @@ for j in range(len(state_select.options)):
 
 
 
-                        time.sleep(1)
+                        # time.sleep(1)
                         driver.close()
 
                         # Host page Scraper code here
 
                         driver.switch_to.window(driver.window_handles[0])
-                        time.sleep(2)
+                        time.sleep(0.5)
 
                         # comp_name = record.find_element(By.CSS_SELECTOR, "span.info-outlet-name > a")
                         # comp_name.click()
                         # driver.switch_to.window(driver.window_handles[-1])
 
-                        comp_name = record.find_element(By.CSS_SELECTOR, "span.info-outlet-name > a")
-                        comp_name.click()
+                        try:
+                            comp_name = record.find_element(By.CSS_SELECTOR, "span.info-outlet-name > a")
+                            comp_name.click()
+                        except Exception as e:
+                            print("Company Name not found")
+                            print(e)
+                            continue
+
                         driver.switch_to.window(driver.window_handles[-1])
 
                         try:
@@ -552,14 +576,14 @@ for j in range(len(state_select.options)):
                             hs_writer = csv.writer(hs_file)
                             hs_writer.writerow([company_name, company_url, "", x_url, linkedin_url, facebook_url, threads_url, topics, country, email, phone, picture_url, source_url])
                         
-                        time.sleep(2)
+                        # time.sleep(2)
                         driver.close()
 
                         driver.switch_to.window(driver.window_handles[0])
-                        time.sleep(2)
+                        time.sleep(0.5)
                 
                      # Wait for some time for the page to load
-                    time.sleep(2)
+                    time.sleep(1)
                 
                 # Now you can perform actions on the next page
                 
